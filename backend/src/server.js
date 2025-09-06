@@ -9,6 +9,7 @@ import path from 'path'
 import authRoutes from '../routes/auth.route.js'
 import userRoutes from '../routes/user.route.js'
 import chatRoutes from '../routes/chat.route.js'
+import courseRoutes from '../routes/course.route.js'
 import { connectDB } from '../lib/db.js'
 
 const app = express()
@@ -27,6 +28,7 @@ app.use(cookieParser())
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/chat', chatRoutes)
+app.use('/api/courses', courseRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
