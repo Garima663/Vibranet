@@ -21,7 +21,7 @@ function CourseInfo({course, setCourse}) {
         description: course.description,
         noOfChapter: course.chapters,
         level: course.difficulty,
-        includeVideo: course.includeVideo,
+        // includeVideo: course.includeVideo,
         category: course.categories?.join(","),
         userId,
       };

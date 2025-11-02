@@ -24,10 +24,6 @@ const CourseSchema = new mongoose.Schema(
       type: [String], 
       default: [] 
     },
-    includeVideo: { 
-      type: Boolean, 
-      default: false 
-    },
       createdBy: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User", 
@@ -41,10 +37,6 @@ const CourseSchema = new mongoose.Schema(
       type: Object, 
       default: {} 
     },
-    //  bannerImageUrl: { // <-- NEW FIELD
-    //   type: String,
-    //   default: "",
-    // },
   },
   { timestamps: true }
 );

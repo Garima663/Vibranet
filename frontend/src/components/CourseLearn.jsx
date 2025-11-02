@@ -1,66 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { axiosInstance } from "../lib/axios";
-
-// export default function CourseLearn() {
-//   const { id } = useParams();
-//   const [course, setCourse] = useState(null);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchCourse = async () => {
-//       try {
-//         const { data } = await axiosInstance.get(`/courses/${id}`);
-//         setCourse(data);
-//       } catch (error) {
-//         console.error("❌ Error fetching course:", error.response?.data || error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchCourse();
-//   }, [id]);
-
-//   if (loading) {
-//     return <p className="p-6">Loading course...</p>;
-//   }
-
-//   if (!course) {
-//     return <p className="p-6 text-red-500">Course not found.</p>;
-//   }
-
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-3xl font-bold">{course.courseJson?.name || course.language}</h1>
-//       <p className="text-gray-600 mt-2">{course.description}</p>
-
-//       {/* Chapters */}
-//       <div className="mt-6">
-//         <h2 className="text-xl font-semibold mb-3">Chapters</h2>
-//         <ul className="space-y-3">
-//           {course.courseJson?.chapters?.map((chapter, idx) => (
-//             <li
-//               key={idx}
-//               className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
-//             >
-//               <h3 className="font-bold">{chapter.chapterName}</h3>
-//               <p className="text-sm text-gray-600">⏱ {chapter.duration}</p>
-//               <ul className="mt-2 list-disc list-inside text-sm text-gray-700">
-//                 {chapter.topics.map((topic, tIdx) => (
-//                   <li key={tIdx}>{topic}</li>
-//                 ))}
-//               </ul>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -145,10 +82,11 @@ export default function CourseLearn() {
 
       {/* Main Content */}
       <main className="flex-1 p-8 overflow-y-auto">
-        <h1 className="text-3xl font-bold mb-3">
+        <h1 className="text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
           {course.courseJson?.name || course.language}
         </h1>
-        <p className="text-gray-600 mb-8">{course.description}</p>
+        <p className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">{course.description}</p>
+        <br></br>
 
         {activeChapter && activeTopic && (
           <div className="bg-white p-6 rounded-lg shadow">
