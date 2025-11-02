@@ -17,6 +17,7 @@ import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import Layout from "./components/Layout.jsx";
+import CourseLearn from "./components/CourseLearn.jsx"
 import { useThemeStore } from "./store/useThemeStore.js";
 
 const App = () => {
@@ -142,6 +143,20 @@ const App = () => {
             )
           }
         />
+        <Route
+  path="/courses/:id/learn"
+  element={
+    isAuthenticated && isOnboarded ? (
+      <Layout showSidebar={false}>
+        {/* This will be your detailed learning page */}
+        <CourseLearn />
+      </Layout>
+    ) : (
+      <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+    )
+  }
+/>
+
 
       </Routes>
 

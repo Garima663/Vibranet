@@ -37,6 +37,14 @@ const CourseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       required: true,
     },
+     courseContent: { 
+      type: Object, 
+      default: {} 
+    },
+    //  bannerImageUrl: { // <-- NEW FIELD
+    //   type: String,
+    //   default: "",
+    // },
   },
   { timestamps: true }
 );

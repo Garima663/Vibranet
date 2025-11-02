@@ -50,7 +50,7 @@ function CourseLayout() {
   return (
 <div className="bg-base-100 min-h-screen">
   <div className="m-8 p-4">
-  <CourseInfo course={course}/>
+  <CourseInfo course={course} setCourse = {setCourse}/>
   <ChapterTopicList course={course}/>
 </div>
 </div>
