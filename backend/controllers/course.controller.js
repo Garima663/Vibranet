@@ -6,16 +6,22 @@ import {
 
 
 
-// export async function getCourse(req,res) {
-//     try {
-//     const courses = await Course.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
-//     res.json(courses);
-//   } catch (err) {
-//     console.error("Fetch courses error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// }
+export const getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    const course = await Course.findById(id).populate("createdBy", "name email");
+
+    if (!course) {
+      return res.status(404).json({ error: "Course not found" });
+    }
+
+    res.json(course);
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    res.status(500).json({ error: "Failed to fetch course" });
+  }
+};
 
 
 
