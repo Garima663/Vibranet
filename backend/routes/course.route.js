@@ -2,12 +2,12 @@
 import express from "express";
 
 import { protectRoute } from "../middleware/auth.middleware.js"; // same as your auth middleware
-import {generateCourse} from "../controllers/course.controller.js";
+import {generateCourse, getCourseById} from "../controllers/course.controller.js";
 
 const router = express.Router();
 
 // ✅ Get my courses
-// router.get("/my-courses", protectRoute, getCourse);
+router.get("/:id", protectRoute, getCourseById);
 
 router.post("/generate-course", protectRoute, generateCourse)
 
