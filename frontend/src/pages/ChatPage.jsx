@@ -1,5 +1,5 @@
 import React from 'react'
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ function ChatPage() {
 
    const { id: targetUserId } = useParams();
 
-  const [chatClient, setChatClient] = useState(null);
+  const chatClientRef = useRef(null);
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +44,11 @@ function ChatPage() {
 
       try {
         console.log("Initializing stream chat client...");
+
+        // Disconnect existing client if any
+        if (chatClientRef.current) {
+          await chatClientRef.current.disconnectUser();
+        }
 
         const client = StreamChat.getInstance(STREAM_API_KEY);
 
@@ -69,7 +74,7 @@ function ChatPage() {
 
         await currChannel.watch();
 
-        setChatClient(client);
+        chatClientRef.current = client;
         setChannel(currChannel);
       } catch (error) {
         console.error("Error initializing chat:", error);
@@ -80,6 +85,13 @@ function ChatPage() {
     };
 
     initChat();
+
+    // Cleanup function to disconnect on unmount
+    return () => {
+      if (chatClientRef.current) {
+        chatClientRef.current.disconnectUser();
+      }
+    };
   }, [tokenData, authUser, targetUserId]);
 
   const handleVideoCall = () => {
@@ -94,11 +106,11 @@ function ChatPage() {
     }
   };
 
-  if (loading || !chatClient || !channel) return <ChatLoader />;
+  if (loading || !chatClientRef.current || !channel) return <ChatLoader />;
 
   return (
     <div className="h-[93vh]">
-      <Chat client={chatClient}>
+      <Chat client={chatClientRef.current}>
         <Channel channel={channel}>
           <div className="w-full relative">
             <CallButton handleVideoCall={handleVideoCall} />
