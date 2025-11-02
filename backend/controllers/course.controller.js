@@ -31,7 +31,7 @@ export const generateCourse = async (req, res) => {
       name,
       description,
       noOfChapter,
-      includeVideo,
+      // includeVideo,
       level,
       category,
       userId,
@@ -43,10 +43,10 @@ export const generateCourse = async (req, res) => {
         .json({ error: "Language name, number of chapters, and userId are required" });
     }
 
-// "bannerImagePrompt": "string",
+
 
     const prompt = `
-      Generate language learning course depends on following details. In which make sure to add course name, description, chapter name, image prompt(create a modern, flat-style 2D digital illustration representing user topic. Include UI/UX elements such as mockup screens, text blocks, icons, buttons, and creative workspace tools. Add symbolic elements related to user language course, like sticky notes, design components, and visual aids. Use a vibrant color palette (blues, purples, oranges) with a clean professional look. The illustration should feel creative, tech-savvy and educational, ideal for visualizing concepts in user language course for language course banner in 3D format, topic under each chapters, durations for each chapters etc, in JSON format only
+      Generate language learning course depends on following details. In which make sure to add course name, description and chapter name. Add topic under each chapters, durations for each chapters etc, in JSON format only
       Schema:
       {
         "Course": {
@@ -54,14 +54,12 @@ export const generateCourse = async (req, res) => {
           "description": "string",
           "category": "string",
           "level": "string",
-          "includeVideo": "boolean",
           "noOfChapters": "number",
           "chapters": [
             {
               "chapterName": "string",
               "duration": "string",
               "topics": ["string"],
-              "imagePrompt": "string"
             }
           ]
         }
@@ -71,7 +69,6 @@ export const generateCourse = async (req, res) => {
       Language: ${name}
       Description: ${description || "N/A"}
       Chapters: ${noOfChapter}
-      Include Video: ${includeVideo}
       Level: ${level || "N/A"}
       Category: ${category || "General"}
     `;
@@ -116,37 +113,6 @@ rawResp = rawResp.replace(/```json|```/g, "").trim();
 const courseJson = jsonResp.Course ? jsonResp.Course : jsonResp;
 
 
-  // --- Generate banner image using Hugging Face ---
-  //  let bannerImageUrl = "";
-  //   try {
-  //     const hfResponse = await fetch(
-  //       "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           inputs: courseJson.bannerImagePrompt || `banner image for ${courseJson.name}`,
-  //         }),
-  //       }
-  //     );
-
-  //     if (!hfResponse.ok) {
-  //       console.error("Hugging Face API error:", await hfResponse.text());
-  //     } else {
-  //       const arrayBuffer = await hfResponse.arrayBuffer();
-  //       const base64Image = Buffer.from(arrayBuffer).toString("base64");
-
-  //       // ✅ Upload somewhere or serve from backend
-  //       bannerImageUrl = `data:image/png;base64,${base64Image}`;
-  //     }
-  //   } catch (err) {
-  //     console.error("Error generating banner image:", err);
-  //   }
-
-    // Save course in DB
     const newCourse = new Course({
   language: name,
   description: courseJson.description || description || "",
@@ -157,10 +123,8 @@ const courseJson = jsonResp.Course ? jsonResp.Course : jsonResp;
     : category
     ? category.split(",").map((c) => c.trim())
     : [],
-  includeVideo: courseJson.includeVideo ?? includeVideo ?? false,
   createdBy: userId,
   courseJson, // store full AI JSON
-  // bannerImageUrl,
 });
 
 await newCourse.save();
@@ -185,7 +149,7 @@ export const generateCourseContent = async (req, res) => {
   console.log("📥 Incoming request body:", req.body);
 
   try {
-    const { courseId, name, description, noOfChapter, level, includeVideo, category, userId } = req.body;
+    const { courseId, name, description, noOfChapter, level, category, userId } = req.body;
 
     if (!name || !noOfChapter || !userId) {
       return res.status(400).json({
@@ -198,8 +162,14 @@ export const generateCourseContent = async (req, res) => {
     }
 
     const prompt = `
-    Generate a course on ${name}.
-    Return only valid JSON strictly following this schema:
+    You are an expert linguist, teacher, and curriculum developer.
+Your task is to generate a detailed, AI-created course for the given language ${name}.
+
+The response must be only valid JSON, following the schema below.
+
+Each topic should include rich, explanatory content with examples, usage, and simple explanations that make it easy for learners to understand.
+
+Do not include any extra text, markdown, or commentary outside the JSON.
 
     {
       "courseContent": [
@@ -214,15 +184,29 @@ export const generateCourseContent = async (req, res) => {
         }
       ]
     }
-    the content should be detailed with examples.
+    the content should be very much detailed with examples.
 
     User Input:
     Language: ${name}
     Description: ${description || "Not provided"}
     Number of Chapters: ${noOfChapter}
     Difficulty Level: ${level || "Not provided"}
-    Include Video: ${includeVideo}
     Category: ${category || "Not provided"}
+
+    Instructions:
+    Generate a comprehensive and detailed course, covering all major learning areas (grammar, vocabulary, pronunciation, culture, etc.)
+
+    Each topic's content must include:
+
+Clear explanation of the concept.
+
+Real-world examples and sentence usages.
+
+(If applicable) simple practice ideas or notes.
+
+Keep the tone friendly, clear, and educational.
+
+Output only valid JSON — nothing else.
     `;
 
      console.log("📝 Prompt sent to AI:", prompt);
