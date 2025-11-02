@@ -1,7 +1,44 @@
 import React from 'react'
 import { Book, Clock, TrendingUp } from "lucide-react";
+import { axiosInstance } from "../lib/axios.js";
+import useAuthUser from "../hooks/useAuthUser.js";
+import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
-function CourseInfo({course}) {
+function CourseInfo({course, setCourse}) {
+
+   const { authUser } = useAuthUser();
+  const userId = authUser?._id;
+  const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+  const handleGenerateCourse = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        courseId: course._id,
+        name: course.language,
+        description: course.description,
+        noOfChapter: course.chapters,
+        level: course.difficulty,
+        includeVideo: course.includeVideo,
+        category: course.categories?.join(","),
+        userId,
+      };
+
+          console.log("📦 Sending payload:", payload);
+
+      const { data } = await axiosInstance.post("/courses/generate-courseContent", payload);
+      console.log("✅ Course generated (frontend):", data);
+      setCourse(data.course);
+      navigate("/courses");
+    } catch (error) {
+      console.error("Error generating course:", error.response?.data || error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       {/* m-8 p-4 */}
@@ -34,7 +71,11 @@ function CourseInfo({course}) {
                 </section>
             </div>
         </div>
-        <button className="btn btn-soft btn-primary mt-2">Generate Course</button>
+        <button className="btn btn-soft btn-primary mt-2"
+         onClick={handleGenerateCourse}
+          disabled={loading}>
+            {loading ? "Generating..." : "Generate Course"}
+            </button>
       </div>
     </div>
   )
