@@ -33,6 +33,10 @@ const CourseSchema = new mongoose.Schema(
       ref: "User", 
       required: true 
     },
+     courseJson: {   // <-- new field to store AI JSON
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -2,14 +2,16 @@
 import express from "express";
 
 import { protectRoute } from "../middleware/auth.middleware.js"; // same as your auth middleware
-import { createCourse, getCourse } from "../controllers/course.controller.js";
+import { createCourse, generateCourse, getCourse } from "../controllers/course.controller.js";
 
 const router = express.Router();
 
 // ✅ Create course
-router.post("/create", protectRoute, createCourse);
+// router.post("/create", protectRoute, createCourse);
 
 // ✅ Get my courses
 router.get("/my-courses", protectRoute, getCourse);
+
+router.post("/generate-course", generateCourse)
 
 export default router;
